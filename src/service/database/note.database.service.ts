@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
 import UserDatabaseService, {UserTable} from "./user.database.service.js";
 
-type NoteTable =  { id: string; createdAt: Date; title: string; content: string; usersId: string; } | null
+export type NoteTable =  { id: string; createdAt: Date; title: string; content: string; usersId: string; } | null
 
 
 export default class NoteDatabaseService {

@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import PasswordValidator from 'password-validator';
+import PasswordService from "../password.service.js";
 
 export type UserTable =  { id: string; username: string; password: string; createdAt: Date; } | null
 
@@ -18,16 +19,17 @@ export default class UserDatabaseService {
 
     public static async createUser(username: string, password: string): Promise<UserTable> {
         if(!this.validateUser(username) || !this.validatePassword(password)){ return null; }
+        const hashedPassword: string = await PasswordService.hash(password);
         return this.prisma.users.create({
             data: {
                 username: username,
-                password: password
+                password: hashedPassword
             }
         })
     }
 
     public static async getUserByUserId(id: string): Promise<UserTable> {
-        return this.prisma.users.findUnique({
+        return this.prisma.users.findUniqueOrThrow({
             where: {
                 id: id
             }
@@ -40,5 +42,9 @@ export default class UserDatabaseService {
                 username: username
             }
         })
+    }
+
+    public static async getAllUsers(): Promise<UserTable[]>  {
+        return this.prisma.users.findMany();
     }
 }
