@@ -1,0 +1,51 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id        String     @id @default(uuid())
+  username  String     @unique
+  password  String
+  createdAt DateTime   @default(now())
+  Notes     Notes[]
+  Sessions  Sessions[]
+}
+
+model Notes {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  title     String
+  content   String
+  Users     Users?   @relation(fields: [usersId], references: [id])
+  usersId   String
+
+  @@index([usersId], name: "notes_users_index")
+  @@map(name: "notes")
+}
+
+model Sessions {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+
+  userAgent      String
+  ipAddress      String
+  expirationTime DateTime
+
+  isActive  Boolean
+  isExpired Boolean
+  isBlocked Boolean
+
+  Users   Users? @relation(fields: [usersId], references: [id])
+  usersId String
+
+  @@index([usersId], name: "sessions_users_index")
+  @@map(name: "sessions")
+}

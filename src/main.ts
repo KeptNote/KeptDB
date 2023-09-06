@@ -1,1 +1,10 @@
-console.log("Hello world")
+import express, {Express} from 'express';
+
+
+const app: Express = express();
+
+
+
+
+
+app.listen(80)
